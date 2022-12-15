@@ -5,14 +5,17 @@ import Header from '../components/Header'
 import { AppContainer, globalStyles } from '../styles/global'
 
 import 'keen-slider/keen-slider.min.css'
+import { CartProvider } from '../contexts/cart'
 
 globalStyles()
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <AppContainer>
-      <Header/>
-      <Component {...pageProps} />
-    </AppContainer>
+    <CartProvider>
+      <AppContainer>
+        <Header/>
+        <Component {...pageProps} />
+      </AppContainer>
+    </CartProvider>
   )
 }

@@ -1,5 +1,7 @@
 import { createContext, ReactNode, useCallback, useState } from "react";
 
+import { setCookie, parseCookies } from "nookies"
+
 interface CartProduct{
     id: string
     name: string
@@ -27,13 +29,15 @@ export const CartContext = createContext({} as CartContextProps)
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
     const [cart, setCart] = useState<CartProduct[]>(() => {
-        const cart = localStorage.getItem("@igniteshop:cart")
+        const cart = parseCookies(null, "@igniteshop:cart")
+    
+        console.log(cart)
 
         if(!cart){
             return []
         }
 
-        return JSON.parse(cart)
+        return []
     })
 
     const addProduct = useCallback((product: CartProduct) => {
@@ -51,7 +55,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
                 updatedCart = [...prev, product]
             }
 
-            localStorage.setItem("@igniteshop:cart", JSON.stringify(updatedCart))
+            setCookie(null, "@igniteshop:cart", JSON.stringify(updatedCart))
             return updatedCart
         })
     },[])

@@ -1,11 +1,13 @@
-import ProductCard from "../components/ProductCard";
-import { HomeContainer } from "../styles/pages/home";
-
-import { useKeenSlider } from 'keen-slider/react'
-import Link from "next/link";
 import { GetStaticProps } from "next";
-import { stripe } from "../lib/stripe";
 import Stripe from "stripe";
+import Link from "next/link";
+import { useKeenSlider } from 'keen-slider/react'
+
+import { stripe } from "../lib/stripe";
+
+import ProductCard from "../components/ProductCard";
+
+import { HomeContainer } from "../styles/pages/home";
 
 interface Product{
   id: string,
@@ -46,7 +48,6 @@ export default function Home({ products }: HomeProps) {
 }
 
 export const getStaticProps: GetStaticProps = async() => {
-
   const response = await stripe.products.list({
     expand: ["data.default_price"]
   })

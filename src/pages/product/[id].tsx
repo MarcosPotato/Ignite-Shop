@@ -1,3 +1,4 @@
+import axios from "axios";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import Stripe from "stripe";
@@ -22,6 +23,20 @@ interface ProductProps{
 }
 
 export default function Product({ product }: ProductProps) {
+
+  const hanleCheckout = async() => {
+    try {
+      const response = await axios.post("/api/checkout", {
+        priceId: product.price.id
+      })
+
+      window.location.href = response.data.checkoutSessionUrl
+
+    } catch (error: any) {
+      alert("Erro ao cirar pagamento")
+    }
+  }
+
   return (
     <ProductContainer>
       <ImageContainer>
@@ -36,7 +51,7 @@ export default function Product({ product }: ProductProps) {
         <h1>{ product.name }</h1>
         <span>{ product.price.value }</span>
         <p>{ product.description }</p>
-        <button>
+        <button onClick={ hanleCheckout }>
           Colocar na Sacola
         </button>
       </ProductInfo>

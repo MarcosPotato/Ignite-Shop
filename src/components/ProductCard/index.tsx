@@ -7,6 +7,8 @@ import { formatValue } from "../../utils/formatValue";
 
 import { CardContainer, ProductContainer, ProductInfo } from "./style";
 
+import BagIcon from '../../assets/icons/bag.svg'
+
 interface Product{
     id: string,
     imageUrl: string,
@@ -66,7 +68,7 @@ export default function ProductCard({
                 </div>
                 <button onClick={ handleAddProductOnCart }>
                     <Image 
-                        src="/assets/bag.svg" 
+                        src={ BagIcon } 
                         width={32} 
                         height={32} 
                         alt="" 

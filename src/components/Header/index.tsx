@@ -1,41 +1,61 @@
 import Image from 'next/image'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
 import Drawer from 'react-modern-drawer'
 import { useCart } from '../../hooks/useCart';
+import { Cart } from '../Cart';
+import { CartButton, CartButtonContainer, CartHeader, CartItensInfo, EmptyCart, HeaderContainer } from "./style";
 
-import { CartButton, CartItensInfo, HeaderContainer } from "./style";
+import BagIcon from '../../assets/icons/bag.svg'
+import CloseIcon from '../../assets/icons/close.svg'
 
 export default function Header (){
-
     const { cart } = useCart([
         "cart"
     ])
 
-    console.log(cart)
-
     const [open, setOpen] = useState<boolean>(false)
+    const [cartItens, setCartItens] = useState<number>(0)
+
+    useEffect(() => {
+        setCartItens(cart.length)
+    },[cart])
 
     return(
         <>
         <HeaderContainer>
             <Image src="/assets/Logo.svg" width={129} height={52} alt=""/>
-            <CartButton onClick={() => setOpen(true)}>
-                { cart.length > 0 && (
-                    <CartItensInfo>
-                        { cart.length }
-                    </CartItensInfo>
+            <CartButtonContainer>
+                { cartItens > 0 && (
+                    <CartItensInfo>{ cartItens }</CartItensInfo>
                 )}
-                <Image src="/assets/bag.svg" width={22} height={22} alt='' />
-            </CartButton>
+                <CartButton onClick={() => setOpen(true)}>
+                    <Image src={BagIcon} width={22} height={22} alt='' />
+                </CartButton>
+            </CartButtonContainer>
         </HeaderContainer>
         <Drawer
             open={open}
             onClose={() => setOpen(false)}
             direction='right'
             duration={200}
-            style={{ width: "600px" }}
+            style={{ 
+                width: "600px", 
+                backgroundColor: "#202024" 
+            }}
         >
-            <div>Hello World</div>
+            <CartHeader>
+                <button onClick={() => setOpen(false)}>
+                    <Image src={CloseIcon} width={24} height={ 24 } alt="" />
+                </button>
+            </CartHeader>
+            { cartItens <= 0 ? (
+                <EmptyCart>
+                    <h1>Nenhum item adicionado no carrinho</h1>
+                </EmptyCart>
+            ): (
+                <Cart onCloseCart={ () => setOpen(false) } />
+            ) }
         </Drawer>
         </>
     )

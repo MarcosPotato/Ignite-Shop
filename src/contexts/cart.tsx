@@ -3,7 +3,7 @@ import { createContext } from "use-context-selector";
 
 import { setCookie, parseCookies } from "nookies"
 
-interface CartProduct{
+export interface CartProduct{
     id: string
     name: string
     quantity: number
@@ -74,7 +74,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const decreaseQuantity = useCallback((productId: string) => {
         setCart(prev => prev.map(item => item.id === productId ? ({
             ...item,
-            quantity: item.quantity <= 1 ? 1 : item.quantity + 1
+            quantity: item.quantity <= 1 ? 1 : item.quantity - 1
         }) :( item )))
     },[])
 

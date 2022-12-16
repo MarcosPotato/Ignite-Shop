@@ -9,6 +9,7 @@ import { AppContainer, globalStyles } from '../styles/global'
 
 import 'keen-slider/keen-slider.min.css'
 import 'react-toastify/dist/ReactToastify.css'
+import 'react-modern-drawer/dist/index.css'
 
 globalStyles()
 

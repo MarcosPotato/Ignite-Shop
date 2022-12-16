@@ -31,15 +31,13 @@ export const CartContext = createContext({} as CartContextProps)
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
     const [cart, setCart] = useState<CartProduct[]>(() => {
-        const cart = parseCookies(null, "@igniteshop:cart")
-    
-        console.log(cart)
+        const { "@igniteshop:cart": cart } = parseCookies(null, "@igniteshop:cart")
 
         if(!cart){
             return []
         }
 
-        return []
+        return JSON.parse(cart)
     })
 
     const addProduct = useCallback((product: CartProduct) => {

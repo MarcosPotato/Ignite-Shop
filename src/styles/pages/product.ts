@@ -71,6 +71,7 @@ export const ProductInfo = styled("div", {
         fontSize: "$sm",
         lineHeight: "160%",
         borderRadius: "8px",
+        cursor: "pointer",
 
         "&:hover": {
             transition: "200ms",

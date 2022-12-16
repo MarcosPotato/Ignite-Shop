@@ -1,4 +1,5 @@
-import { createContext, ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useState } from "react";
+import { createContext } from "use-context-selector";
 
 import { setCookie, parseCookies } from "nookies"
 
@@ -6,13 +7,14 @@ interface CartProduct{
     id: string
     name: string
     quantity: number
+    imageUrl: string
     price: {
         id: string,
         value: number
     }
 }
 
-interface CartContextProps{
+export interface CartContextProps{
     cart: CartProduct[]
     addProduct: (product: CartProduct) => void
     removeProduct: (productId: string) => void

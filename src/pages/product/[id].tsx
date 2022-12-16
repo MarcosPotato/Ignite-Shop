@@ -1,11 +1,14 @@
 import axios from "axios";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
+import { toast } from "react-toastify";
 import Stripe from "stripe";
+import { useCart } from "../../hooks/useCart";
 
 import { stripe } from "../../lib/stripe";
 
 import { ProductContainer, ImageContainer, ProductInfo } from "../../styles/pages/product";
+import { formatValue } from "../../utils/formatValue";
 
 interface Product{
   id: string,
@@ -14,7 +17,7 @@ interface Product{
   description: string
   price: {
     id: string,
-    value: string
+    value: number
   }
 }
 
@@ -24,17 +27,20 @@ interface ProductProps{
 
 export default function Product({ product }: ProductProps) {
 
-  const hanleCheckout = async() => {
-    try {
-      const response = await axios.post("/api/checkout", {
-        priceId: product.price.id
-      })
+  const { addProduct } = useCart([
+    "addProduct"
+  ])
 
-      window.location.href = response.data.checkoutSessionUrl
+  const hanleAddCart = async() => {
+    addProduct({
+      id: product.id,
+      name: product.name,
+      imageUrl: product.imageUrl,
+      quantity: 1,
+      price: product.price
+    })
 
-    } catch (error: any) {
-      alert("Erro ao cirar pagamento")
-    }
+    toast.success(`Produto ${ product.name } adicionado ao carrinho!`)
   }
 
   return (
@@ -49,9 +55,9 @@ export default function Product({ product }: ProductProps) {
       </ImageContainer>
       <ProductInfo>
         <h1>{ product.name }</h1>
-        <span>{ product.price.value }</span>
+        <span>{ formatValue(product.price.value) }</span>
         <p>{ product.description }</p>
-        <button onClick={ hanleCheckout }>
+        <button onClick={ hanleAddCart }>
           Colocar na Sacola
         </button>
       </ProductInfo>
@@ -91,10 +97,7 @@ export const getStaticProps: GetStaticProps = async({ params }) => {
     description: response.description as string,
     price: {
       id: price.id,
-      value: new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-      }).format(!!price.unit_amount ? price.unit_amount / 100 : 0)
+      value: !!price.unit_amount ? price.unit_amount / 100 : 0
     }
   }
 

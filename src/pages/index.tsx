@@ -8,6 +8,7 @@ import { stripe } from "../lib/stripe";
 import ProductCard from "../components/ProductCard";
 
 import { HomeContainer } from "../styles/pages/home";
+import { useRouter } from "next/router";
 
 interface Product{
   id: string,
@@ -15,7 +16,7 @@ interface Product{
   name: string
   price: {
     id: string,
-    value: string
+    value: number
   }
 }
 
@@ -24,6 +25,8 @@ interface HomeProps{
 }
 
 export default function Home({ products }: HomeProps) {
+  const router = useRouter()
+
   const [silderRef] = useKeenSlider({
     slides: {
       perView: 3,
@@ -35,14 +38,13 @@ export default function Home({ products }: HomeProps) {
   return (
     <HomeContainer ref={ silderRef } className="keen-slider">
       { products.map(product => (
-        <Link 
-          key={ product.id }
-          className="keen-slider__slide"
-          href={`/product/${ product.id }`}
-        >
-          <ProductCard product={ product } />
-        </Link>
-      )) }
+          <ProductCard 
+            key={ product.id }
+            className="keen-slider__slide"
+            product={ product } 
+            onSelect={() => router.push(`/product/${ product.id }`)}
+          />
+      )) } 
     </HomeContainer>
   )
 }
@@ -61,10 +63,7 @@ export const getStaticProps: GetStaticProps = async() => {
       name: product.name,
       price: {
         id: price.id,
-        value: new Intl.NumberFormat("pt-BR", {
-          style: "currency",
-          currency: "BRL"
-        }).format(!!price.unit_amount ? price.unit_amount / 100 : 0)
+        value: !!price.unit_amount ? (price.unit_amount / 100) : 0
       }
     }
   })

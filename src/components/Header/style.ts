@@ -1,12 +1,23 @@
 import { styled } from "../../styles"
-import Drawer from 'react-modern-drawer'
 
 export const HeaderContainer = styled("header", {
     width: "calc(100% - 44px)",
     maxWidth: "1128px",
     display: "flex",
     justifyContent: "space-between",
-    padding: "32px 22px"
+    padding: "32px 22px",
+
+    img: {
+        cursor: "pointer"
+    },
+
+    variants: {
+        isSuccessPage: {
+            true: {
+                justifyContent: "center"
+            }
+        }
+    }
 })
 
 export const CartButtonContainer = styled("div", {

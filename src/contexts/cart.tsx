@@ -1,7 +1,8 @@
-import { ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { createContext } from "use-context-selector";
 
-import { setCookie, parseCookies } from "nookies"
+import { setCookie, parseCookies, destroyCookie } from "nookies"
+import axios from "axios";
 
 export interface CartProduct{
     id: string
@@ -20,6 +21,8 @@ export interface CartContextProps{
     removeProduct: (productId: string) => void
     increaseQuantity: (productId: string) => void
     decreaseQuantity: (productId: string) => void
+    makeCheckout: () => Promise<string>
+    clearCart: () => void
 }
 
 interface CartProviderProps{
@@ -54,8 +57,6 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
             } else{
                 updatedCart = [...prev, product]
             }
-
-            setCookie(null, "@igniteshop:cart", JSON.stringify(updatedCart))
             return updatedCart
         })
     },[])
@@ -78,6 +79,34 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         }) :( item )))
     },[])
 
+    const makeCheckout = useCallback(async(): Promise<string> => {
+        const productsList = cart.map(item => ({
+            priceId: item.price.id,
+            quantity: item.quantity
+        }))
+
+        try {
+            const response = await axios.post("/api/checkout", { productsList })
+            return response.data.checkoutSessionUrl
+            
+        } catch (error: any) {
+            console.log(error)
+            throw error
+        }
+    },[cart])
+
+    const clearCart = useCallback(() => {
+        setCart([])
+    },[])
+
+    useEffect(() => {
+        if(cart.length > 0){
+            setCookie(null, "@igniteshop:cart", JSON.stringify(cart))
+        } else{
+            destroyCookie(null, "@igniteshop:cart") 
+        }
+    },[cart])
+
     return(
         <CartContext.Provider 
             value={{
@@ -85,7 +114,9 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
                 addProduct,
                 decreaseQuantity,
                 increaseQuantity,
-                removeProduct 
+                removeProduct,
+                makeCheckout,
+                clearCart
             }}
         >
             { children }

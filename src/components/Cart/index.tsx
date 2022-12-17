@@ -7,15 +7,16 @@ import { CartItem } from "../CartItem"
 
 import { CartContainer, CartItens, CartPayment, PaymentDetails } from "./style"
 import { formatValue } from "../../utils/formatValue"
+import { toast } from "react-toastify"
 
-interface CartProps{
-    onCloseCart: () => void
-}
-
-export const Cart: React.FC<CartProps> = ({ onCloseCart }) => {
-    const { cart } = useCart(["cart"])
+export const Cart: React.FC = () => {
+    const { cart, makeCheckout } = useCart([
+        "cart",
+        "makeCheckout"
+    ])
 
     const [productList, setProductList] = useState<CartProduct[]>([])
+    const [isCheckouting, setIsCheckouting] = useState(false)
 
     useEffect(() => {
         setProductList(cart)
@@ -28,6 +29,19 @@ export const Cart: React.FC<CartProps> = ({ onCloseCart }) => {
     const totalItens = useMemo(() => (
         productList.reduce((acc, currentProduct) => acc + currentProduct.quantity, 0)
     ),[productList])
+
+    const handleCheckout = async() => {
+        setIsCheckouting(true)
+        try {
+            const sessionUrl = await makeCheckout()
+            window.location.href = sessionUrl
+
+        } catch (error: any) {
+            console.log(error)
+            toast.error(error.response?.data.message || "Falha ao realizar checkout")
+            setIsCheckouting(false)
+        }
+    }
 
     return (
         <CartContainer>
@@ -50,8 +64,8 @@ export const Cart: React.FC<CartProps> = ({ onCloseCart }) => {
                         <span>{ formatValue(totalValue) }</span>
                     </label>
                 </PaymentDetails>
-                <button>
-                    Finalizar compra
+                <button onClick={ handleCheckout } disabled={ isCheckouting }>
+                    { isCheckouting ? "Carregando..." : "Finalizar compra"}
                 </button>
             </CartPayment>
         </CartContainer>

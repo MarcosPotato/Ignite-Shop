@@ -52,11 +52,16 @@ export const CartPayment = styled("footer", {
         marginBottom: "32px",
         borderRadius: "8px",
         color: "$gray100",
-        cursor: "pointer",
-
-        "&:hover": {
+        
+        "&:not(:disabled):hover": {
+            cursor: "pointer",
             transition: "200ms",
             backgroundColor: "$green300"
+        },
+
+        "&:disabled": {
+            cursor: "blocked",
+            opacity: 0.8
         }
     }
 })

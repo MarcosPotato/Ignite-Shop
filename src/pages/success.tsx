@@ -33,7 +33,7 @@ export default function Success({ customer, productsList }: SuccessProps) {
         <SuccessContainer>
             <ProductList>
                 { productsList.map(product => (
-                    <ProductItem>
+                    <ProductItem key={ product.id }>
                         <Image src={product.imageUrl} width={130} height={ 130 } alt=""/>
                     </ProductItem>
                 )) }
